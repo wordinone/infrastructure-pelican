@@ -281,7 +281,12 @@ def process_sequence(metadata, seq, sequence, load, debug):
     if 'sequence' in sequence:
         if debug:
             print(f'sequence: {sequence["sequence"]}')
-        reference = metadata[sequence['sequence']]
+        if '.' in sequence['sequence']:
+            seq_split = sequence['sequence'].split('.')
+            reference = metadata[seq_split[0]][seq_split[1]]
+            reference = sequence_dict(seq, reference)
+        else:
+            reference = metadata[sequence['sequence']]
         # sequences derived from prior sequences do not need to be converted to a sequence
         is_sequence = True
 
@@ -325,7 +330,11 @@ def process_sequence(metadata, seq, sequence, load, debug):
     if 'size' in sequence:
         if debug:
             print(f'calculate size: {seq}')
-        reference = len(reference)
+        sequence['ref'] = reference
+        reference = { }
+        reference['main'] = sequence['ref']
+        reference['size'] = int(len(reference['main']))
+        is_dictionary = True
 
     # if this not already a sequence or dictionary then convert to a sequence
     if not is_sequence and not is_dictionary:
